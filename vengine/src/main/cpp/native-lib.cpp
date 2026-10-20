@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <GLES2/gl2.h>
+#include <v8-version-string.h>
 #include "app/js/Js.h"
 #include "app/logger/Logger.h"
 #include "app/misc/misc.h"
@@ -54,4 +55,10 @@ JNIEXPORT void JNICALL
 Java_com_vengine_engine_VEngine_dispose(JNIEnv *env, jclass clazz) {
     delete js;
     js = nullptr;
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_vengine_engine_VEngine_getV8Version(JNIEnv *env, jclass clazz) {
+    return env->NewStringUTF(V8_VERSION_STRING);
 }

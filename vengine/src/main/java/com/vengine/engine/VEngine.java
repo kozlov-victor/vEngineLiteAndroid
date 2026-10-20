@@ -71,6 +71,7 @@ public class VEngine {
     }
 
     public static native void initV8();
+    public static native String getV8Version();
     public static native JsCompilationResult compileScript(String fileName, String source);
     public static native void updateFrame();
 

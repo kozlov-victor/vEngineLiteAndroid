@@ -8,6 +8,7 @@
 
 #include <v8-isolate.h>
 #include <v8.h>
+#include <v8-version-string.h>
 
 #include <utility>
 #include "Js.h"
@@ -82,6 +83,8 @@ void Js::initV8() {
     persistentContext = new v8::Persistent<v8::Context>();
     persistentContext->Reset(isolate, context);
     Logger::info("V8 is ready");
+    Logger::info("V8 version is");
+    Logger::info(V8_VERSION_STRING);
 
 }
 

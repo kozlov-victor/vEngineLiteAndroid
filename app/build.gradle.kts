@@ -32,6 +32,7 @@ android {
 
 dependencies {
     implementation(project(":vengine"))
+    //implementation(files("libs/vengine-release.aar"))
     implementation(libs.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
