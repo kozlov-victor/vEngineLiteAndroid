@@ -62,7 +62,7 @@ target_link_libraries(
         m
 )
 
-if(ANDROID AND ANDROID_ABI STREQUAL "arm64-v8a")
+if(ANDROID AND ANDROID_ABI STREQUAL "arm64-v8a" OR ANDROID_ABI STREQUAL "x86_64")
     target_link_options(vengine PRIVATE
             "-Wl,-wrap,calloc"
             "-Wl,-wrap,free"
