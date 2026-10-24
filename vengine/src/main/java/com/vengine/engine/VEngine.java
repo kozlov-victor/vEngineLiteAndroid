@@ -17,9 +17,12 @@ import com.vengine.utils.SurfaceResizer;
 
 import android.widget.FrameLayout;
 
+import androidx.annotation.RestrictTo;
+
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class VEngine {
 
     static {
@@ -71,6 +74,7 @@ public class VEngine {
     }
 
     public static native void initV8();
+    public static native JsCompilationResult initGlobalHandlers();
     public static native String getV8Version();
     public static native JsCompilationResult compileScript(String fileName, String source);
     public static native void updateFrame();

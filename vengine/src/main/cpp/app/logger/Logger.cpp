@@ -1,6 +1,3 @@
-//
-// Created by kozlo on 11/18/2023.
-//
 
 #include "Logger.h"
 #include <android/log.h>

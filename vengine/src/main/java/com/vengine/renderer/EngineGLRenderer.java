@@ -16,18 +16,10 @@ public class EngineGLRenderer implements GLSurfaceView.Renderer {
 
     private final FPSCounter fpsCounter = new FPSCounter();
     private boolean surfaceAlreadyCreated = false;
-    private boolean resizeRequested = false;
+    private volatile boolean resizeRequested = false;
 
     private void compileScriptFromLocalUrl(String assetUrl) {
         JsCompilationResult result = VEngine.compileScriptFromLocalUrl(assetUrl);
-        if (!result.isSuccess()) {
-            VEngine.dispose();
-            throw new RuntimeException("js error: \n"+result.getError());
-        }
-    }
-
-    private void compileScriptFromUrl(String url) {
-        JsCompilationResult result = VEngine.compileScriptFromUrl(url);
         if (!result.isSuccess()) {
             VEngine.dispose();
             throw new RuntimeException("js error: \n"+result.getError());
@@ -68,6 +60,12 @@ public class EngineGLRenderer implements GLSurfaceView.Renderer {
         VEngine.initV8();
         applyScreenSize();
         compileScriptFromLocalUrl("bootstrap.js");
+        var result = VEngine.initGlobalHandlers();
+        if (!result.isSuccess()) {
+            VEngine.dispose();
+            throw new RuntimeException("initGlobalHandlers error: \n"+result.getError());
+        }
+
         var activity = VEngine.getActivity();
         if (activity!=null) {
             var assetsLoaderListener = VEngineSetup.getOnAssetsLoaderListener();

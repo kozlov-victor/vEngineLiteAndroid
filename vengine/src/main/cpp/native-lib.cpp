@@ -32,27 +32,56 @@ Java_com_vengine_engine_VEngine_compileScript(JNIEnv *env, jclass clazz, jstring
 }
 
 extern "C"
+JNIEXPORT jobject JNICALL
+Java_com_vengine_engine_VEngine_initGlobalHandlers(JNIEnv *env, jclass clazz) {
+    bool success = true;
+    std::string result;
+    if (!js->findFunctionByName("_nextTick",js->nextTickFunction)) {
+        success = false;
+        result = "no _nextTick function; bootstrap.js is wrong";
+    }
+    else if (!js->findFunctionByName("_triggerEvent", js->triggerEventFunction)) {
+        success = false;
+        result = "no _triggerEvent function; bootstrap.js is wrong";
+    }
+    jclass cl = env->FindClass("com/vengine/model/JsCompilationResult");
+    jmethodID cid = env->GetMethodID(cl, "<init>", "(ZLjava/lang/String;)V");
+    return env->NewObject(cl, cid, success,env->NewStringUTF(result.c_str()));
+}
+
+extern "C"
 JNIEXPORT void JNICALL
 Java_com_vengine_engine_VEngine_updateFrame(JNIEnv *env, jclass clazz) {
-    v8::Local<v8::Value> args[] = {};
-    js->callFunc("_nextTick",0,args);
+    if (js == nullptr) {
+        return;
+    }
+    js->callFunction(js->nextTickFunction);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_vengine_engine_VEngine_onTouchEvent(JNIEnv *env, jclass clazz, jstring event_name, jfloat x, jfloat y, jint id) {
+    if (js == nullptr) {
+        return;
+    }
     js->onTouchEvent(jstring2string(env,event_name).c_str(),x,y,id);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_vengine_engine_VEngine_onResize(JNIEnv *env, jclass clazz, jint width, jint height) {
+    if (js == nullptr) {
+        return;
+    }
     js->onResize(width,height);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_vengine_engine_VEngine_dispose(JNIEnv *env, jclass clazz) {
+    if (js == nullptr) {
+        return;
+    }
     delete js;
     js = nullptr;
 }

@@ -149,26 +149,113 @@ JsCompilationResult Js::compileScript(const char* fileName, const char* code) co
 
 }
 
-void Js::callFunc(const char *funcname,const int argc,v8::Local<v8::Value> argv[]) const {
+bool Js::findFunctionByName(
+        const char* name,
+        v8::Global<v8::Function>& result
+) const {
+    if (isolate == nullptr ||
+        persistentContext == nullptr ||
+        persistentContext->IsEmpty() ||
+        name == nullptr) {
+        return false;
+    }
+
     v8::Isolate::Scope isolate_scope(isolate);
     v8::HandleScope handle_scope(isolate);
-    // we have to create a local handle from the persistent handle
-    // every time, see process.cc example
-    v8::Handle<v8::Context> context_local =
-            v8::Local<v8::Context>::New(isolate, persistentContext->Get(isolate));
-    v8::Context::Scope context_scope(context_local);
 
-    v8::TryCatch tryCatch(isolate);
+    v8::Local<v8::Context> context =
+            persistentContext->Get(isolate);
 
-    v8::Local<v8::Object> fn_value =
-        context_local->Global()->Get(context_local, v8::String::NewFromUtf8(isolate, funcname).ToLocalChecked()).
-        ToLocalChecked().As<v8::Object>();
-
-    v8::MaybeLocal<v8::Value> result =
-            fn_value->CallAsFunction(context_local, context_local->Global(), argc, argv);
-    if (result.IsEmpty()) {
-        reportError(isolate,tryCatch,context_local,"function call error");
+    if (context.IsEmpty()) {
+        return false;
     }
+
+    v8::Context::Scope context_scope(context);
+    v8::TryCatch try_catch(isolate);
+
+    v8::Local<v8::String> key;
+
+    if (!v8::String::NewFromUtf8(
+            isolate,
+            name,
+            v8::NewStringType::kNormal
+    ).ToLocal(&key)) {
+        return false;
+    }
+
+    v8::Local<v8::Value> value;
+
+    if (!context->Global()->Get(context, key).ToLocal(&value)) {
+        Logger::error(
+                std::string("findFunctionByName: failed to get ") + name
+        );
+        return false;
+    }
+
+    if (!value->IsFunction()) {
+        Logger::error(
+                std::string("findFunctionByName: not a function: ") + name
+        );
+        return false;
+    }
+
+    result.Reset(isolate, value.As<v8::Function>());
+
+    return true;
+}
+
+bool Js::callFunction(const v8::Global<v8::Function>& function, int argc, v8::Local<v8::Value> argv[]) const {
+    if (isolate == nullptr ||
+        persistentContext == nullptr ||
+        persistentContext->IsEmpty() ||
+        function.IsEmpty() ||
+        argc < 0 ||
+        (argc > 0 && argv == nullptr)) {
+        Logger::error("callFunction: invalid arguments or V8 state");
+        return false;
+    }
+
+    v8::Isolate::Scope isolate_scope(isolate);
+    v8::HandleScope handle_scope(isolate);
+
+    v8::Local<v8::Context> context = persistentContext->Get(isolate);
+
+    if (context.IsEmpty()) {
+        Logger::error("callFunction: context is empty");
+        return false;
+    }
+
+    v8::Context::Scope context_scope(context);
+    v8::TryCatch try_catch(isolate);
+
+    v8::Local<v8::Function> localFunction = function.Get(isolate);
+
+    v8::Local<v8::Value> result;
+
+    if (!localFunction->Call(
+            context,
+            context->Global(),
+            argc,
+            argv
+    ).ToLocal(&result)) {
+
+        Logger::error("callFunction: JavaScript function failed");
+
+        if (try_catch.HasCaught()) {
+            v8::String::Utf8Value exception(
+                    isolate,
+                    try_catch.Exception()
+            );
+
+            if (*exception != nullptr) {
+                Logger::error(*exception);
+            }
+        }
+
+        return false;
+    }
+
+    return true;
 }
 
 void Js::onResize(int width, int height) const {
@@ -193,7 +280,7 @@ void Js::onResize(int width, int height) const {
     v8::Local<v8::Value> argv[] = {
         v8::String::NewFromUtf8(isolate,"resize").ToLocalChecked()
     };
-    callFunc("_triggerEvent",1,argv);
+    callFunction(triggerEventFunction,1,argv);
 }
 
 void Js::onTouchEvent(const char *event_name, float x, float y, int id) const {
@@ -266,9 +353,29 @@ void Js::onTouchEvent(const char *event_name, float x, float y, int id) const {
 }
 
 Js::~Js() {
-    isolate->Dispose();
+    // Спершу треба зупинити всі потоки, які можуть звертатися до V8,
+    // і дочекатися завершення їхньої роботи.
+
+    if (persistentContext != nullptr) {
+        persistentContext->Reset();
+        delete persistentContext;
+        persistentContext = nullptr;
+    }
+
+    if (isolate != nullptr) {
+        isolate->Dispose();
+        isolate = nullptr;
+        nextTickFunction.Reset();
+        triggerEventFunction.Reset();
+    }
+
+    if (allocator != nullptr) {
+        delete allocator;
+        allocator = nullptr;
+    }
+
+    // Це глобальні операції: виконуй їх лише тоді,
+    // коли інші Isolate у процесі більше не використовуються.
     v8::V8::Dispose();
     v8::V8::DisposePlatform();
-    delete allocator;
-    delete persistentContext;
 }
