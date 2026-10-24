@@ -1,9 +1,6 @@
-//
-// Created by kozlo on 11/19/2023.
-//
 
-#ifndef VENGINEANDROID_GLFUNCTIONS_H
-#define VENGINEANDROID_GLFUNCTIONS_H
+#ifndef VENGINE_GLFUNCTIONS_H
+#define VENGINE_GLFUNCTIONS_H
 
 
 #include <v8-isolate.h>
@@ -14,4 +11,4 @@ public:
 };
 
 
-#endif //VENGINEANDROID_GLFUNCTIONS_H
+#endif

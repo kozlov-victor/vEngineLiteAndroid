@@ -1,6 +1,3 @@
-//
-// Created by kozlo on 12/8/2023.
-//
 
 #include <string>
 #include <jni.h>

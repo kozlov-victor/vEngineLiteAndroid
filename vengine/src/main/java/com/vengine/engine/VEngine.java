@@ -65,18 +65,32 @@ public class VEngine {
         return null;
     }
 
-    public static JsCompilationResult compileScriptFromLocalUrl(String assetFileName) {
-        return compileScript(assetFileName, VEngine.assets.loadStringFromLocalAsset(assetFileName));
+    private static void checkCompilationResult(JsCompilationResult result) {
+        if (!result.isSuccess()) {
+            VEngine.dispose();
+            throw new RuntimeException("js error: \n"+result.getError());
+        }
     }
 
-    public static JsCompilationResult compileScriptFromUrl(String url) {
-        return compileScript(url, VEngine.assets.loadString(url));
+    public static void compileScriptFromLocalUrl(String assetFileName) {
+        JsCompilationResult result = compileScript(assetFileName, VEngine.assets.loadStringFromLocalAsset(assetFileName));
+        checkCompilationResult(result);
+    }
+
+    public static void compileScriptFromUrl(String url) {
+        JsCompilationResult result = compileScript(url, VEngine.assets.loadString(url));
+        checkCompilationResult(result);
+    }
+
+    public static void compileInlineScript(String script) {
+        JsCompilationResult result = VEngine.compileScript("<inline>",script);
+        checkCompilationResult(result);
     }
 
     public static native void initV8();
     public static native JsCompilationResult initGlobalHandlers();
     public static native String getV8Version();
-    public static native JsCompilationResult compileScript(String fileName, String source);
+    private static native JsCompilationResult compileScript(String fileName, String source);
     public static native void updateFrame();
 
     public static native void onTouchEvent(String eventName, float x, float y, int id);

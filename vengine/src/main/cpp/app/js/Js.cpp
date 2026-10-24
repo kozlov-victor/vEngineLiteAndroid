@@ -1,8 +1,3 @@
-//
-// Created by kozlo on 11/18/2023.
-//
-
-#include <jni.h>
 #include <string>
 #include <sstream>
 
@@ -12,14 +7,13 @@
 
 #include <utility>
 #include "Js.h"
-#include "include/libplatform/libplatform.h"
-#include "app/logger/Logger.h"
-#include "app/console/Console.h"
-#include "app/gl/GlFields.h"
-#include "app/gl/GlFunctions.h"
-#include "app/external_functions/ExternalFunctions.h"
-#include "app/js_compilation_result/JsCompilationResult.h"
-
+#include "libplatform/libplatform.h"
+#include "../logger/Logger.h"
+#include "../console/Console.h"
+#include "../gl/GlFields.h"
+#include "../gl/GlFunctions.h"
+#include "../external_functions/ExternalFunctions.h"
+#include "../js_compilation_result/JsCompilationResult.h"
 
 
 JsCompilationResult reportError(v8::Isolate *isolate,v8::TryCatch &tryCatch,v8::Local<v8::Context> &context,const std::string& error) {
@@ -88,7 +82,7 @@ void Js::initV8() {
 
 }
 
-void Js::initGlobalObjects(JNIEnv *env) const {
+void Js::initGlobalObjects(void* env) const {
     Logger::info("init global objects");
     v8::Isolate::Scope isolate_scope(isolate);
     v8::HandleScope handle_scope(isolate);
@@ -98,7 +92,7 @@ void Js::initGlobalObjects(JNIEnv *env) const {
     v8::Context::Scope context_scope(context_local);
 
     // create js global objects
-    ExternalFunctions::create(env,isolate,context_local);
+    ExternalFunctions::create(env, isolate, context_local);
     Console::create(isolate,context_local);
     v8::Local<v8::Object> globalGL = v8::Object::New(isolate);
     GlFields::create(isolate, context_local, globalGL);

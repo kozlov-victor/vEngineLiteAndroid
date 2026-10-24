@@ -1,6 +1,3 @@
-//
-// Created by kozlo on 11/18/2023.
-//
 
 #include <v8-function.h>
 #include <v8-context.h>
@@ -8,7 +5,7 @@
 #include "Console.h"
 #include "../logger/Logger.h"
 
-void log_(int level,const v8::FunctionCallbackInfo<v8::Value>& args) {
+void _console_log_(const int level,const v8::FunctionCallbackInfo<v8::Value>& args) {
     v8::Isolate *isolate = args.GetIsolate();
     std::stringstream ss;
     for (int i=0;i<args.Length();i++) {
@@ -16,37 +13,46 @@ void log_(int level,const v8::FunctionCallbackInfo<v8::Value>& args) {
         ss << *str;
         if (i<args.Length()-1) ss << " ";
     }
-    Logger::log(level,ss.str());
+    switch (level) {
+        case 0:
+            Logger::info(ss.str());
+            break;
+        case 1:
+            Logger::warn(ss.str());
+            break;
+        default:
+            Logger::error(ss.str());
+    }
 }
 
-void Console::create(v8::Isolate *isolate,v8::Local<v8::Context> &context_local) {
-    v8::Local<v8::Object> console = v8::Object::New(isolate);
+void Console::create(v8::Isolate *isolate,v8::Local<v8::Context> &context) {
+    const v8::Local<v8::Object> console = v8::Object::New(isolate);
     console->Set(
-            context_local,
+            context,
             v8::String::NewFromUtf8(isolate, "_log").ToLocalChecked(),
-            v8::Function::New(context_local,
+            v8::Function::New(context,
               [](auto args) {
-                  log_(Logger::LEVEL_INFO,args);
+                  _console_log_(0,args);
               }).ToLocalChecked()
     ).Check();
     console->Set(
-            context_local,
+            context,
+            v8::String::NewFromUtf8(isolate, "_warn").ToLocalChecked(),
+            v8::Function::New(context,
+              [](auto args) {
+                  _console_log_(1,args);
+              }).ToLocalChecked()
+    ).Check();
+    console->Set(
+            context,
             v8::String::NewFromUtf8(isolate, "_error").ToLocalChecked(),
-            v8::Function::New(context_local,
+            v8::Function::New(context,
             [](auto args) {
-                log_(Logger::LEVEL_ERROR,args);
+                _console_log_(2,args);
             }).ToLocalChecked()
     ).Check();
-    console->Set(
-            context_local,
-            v8::String::NewFromUtf8(isolate, "_warn").ToLocalChecked(),
-            v8::Function::New(context_local,
-              [](auto args) {
-                  log_(Logger::LEVEL_WARN,args);
-              }).ToLocalChecked()
-    ).Check();
-    context_local->Global()->Set(
-            context_local,
+    context->Global()->Set(
+            context,
             v8::String::NewFromUtf8(isolate, "console").ToLocalChecked(),
             console
     ).Check();

@@ -3,7 +3,7 @@
 #include <v8-version-string.h>
 #include "app/js/Js.h"
 #include "app/logger/Logger.h"
-#include "app/misc/misc.h"
+#include "app/misc/android/misc.h"
 
 
 Js *js;

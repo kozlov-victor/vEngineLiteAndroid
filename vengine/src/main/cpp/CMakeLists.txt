@@ -27,13 +27,13 @@ add_library(
         SHARED
         native-lib.cpp
         app/js/Js.cpp
-        app/logger/Logger.cpp
+        app/logger/Logger.android.cpp
         app/console/Console.cpp
         app/gl/GlFields.cpp
         app/gl/GlFunctions.cpp
-        app/external_functions/ExternalFunctions.cpp
+        app/external_functions/ExternalFunctions.android.cpp
         app/js_compilation_result/JsCompilationResult.cpp
-        app/misc/misc.cpp
+        app/misc/android/misc.cpp
         app/misc/fun.hpp
 )
 

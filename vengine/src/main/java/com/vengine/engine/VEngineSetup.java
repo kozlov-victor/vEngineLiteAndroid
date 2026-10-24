@@ -1,7 +1,6 @@
 package com.vengine.engine;
 
 import com.vengine.assets.OnAssetsLoaderListener;
-import com.vengine.model.JsCompilationResult;
 
 public class VEngineSetup {
 
@@ -15,8 +14,8 @@ public class VEngineSetup {
         VEngine.assets.setRemoteBaseUrl(remoteBaseUrl);
     }
 
-    public static JsCompilationResult compileScriptFromUrl(String url) {
-        return VEngine.compileScriptFromUrl(url);
+    public static void compileScriptFromUrl(String url) {
+        VEngine.compileScriptFromUrl(url);
     }
 
     public static OnAssetsLoaderListener getOnAssetsLoaderListener() {

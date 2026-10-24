@@ -1,16 +1,11 @@
-//
-// Created by kozlo on 11/27/2023.
-//
-
 #include <v8-function.h>
 #include <v8-context.h>
 
 #include <jni.h>
-#include <GLES2/gl2.h>
 #include "ExternalFunctions.h"
-#include "app/logger/Logger.h"
-#include "app/misc/fun.hpp"
-#include "app/misc/misc.h"
+#include "../logger/Logger.h"
+#include "../misc/fun.hpp"
+#include "../misc/android/misc.h"
 
 JNIEnv *envClosure;
 
@@ -133,9 +128,9 @@ void setBgColor(const v8::FunctionCallbackInfo<v8::Value>& args) {
     envClosure->CallStaticVoidMethod(cl, m, jArg0);
 }
 
-void ExternalFunctions::create(JNIEnv *env,v8::Isolate *isolate, v8::Local<v8::Context> &context_local) {
+void ExternalFunctions::create(void* env, v8::Isolate *isolate, v8::Local<v8::Context> &context_local) {
     v8::Local<v8::Object> ext = v8::Object::New(isolate);
-    envClosure = env;
+    envClosure = static_cast<JNIEnv*>(env);
 
     std::vector<Fun> funcs = {
             {"setSurfaceWidth", setSurfaceWidth},

@@ -1,13 +1,11 @@
-//
-// Created by kozlo on 12/6/2023.
-//
 
-#ifndef VENGINEANDROID_FUN_HPP
-#define VENGINEANDROID_FUN_HPP
+#ifndef VENGINE_FUN_HPP
+#define VENGINE_FUN_HPP
 
 #include <string>
+#include <v8.h>
 #include <v8-function-callback.h>
-
+#include "../logger/Logger.h"
 
 template <typename T>
 T getNumericParameter(const v8::FunctionCallbackInfo<v8::Value>& args, int i) {
@@ -28,4 +26,4 @@ struct Fun {
     std::string name;
     void (*value)(const v8::FunctionCallbackInfo<v8::Value>&);
 };
-#endif //VENGINEANDROID_FUN_HPP
+#endif

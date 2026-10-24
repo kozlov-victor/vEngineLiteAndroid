@@ -1,9 +1,6 @@
-//
-// Created by kozlo on 11/18/2023.
-//
 
-#ifndef VENGINEANDROID_GLFIELDS_H
-#define VENGINEANDROID_GLFIELDS_H
+#ifndef VENGINE_GLFIELDS_H
+#define VENGINE_GLFIELDS_H
 
 
 #include <v8-isolate.h>
@@ -14,4 +11,4 @@ public:
 };
 
 
-#endif //VENGINEANDROID_GLFIELDS_H
+#endif

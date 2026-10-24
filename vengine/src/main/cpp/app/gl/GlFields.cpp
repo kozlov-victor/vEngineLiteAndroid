@@ -1,6 +1,4 @@
-//
-// Created by kozlo on 11/18/2023.
-//
+
 
 #include "GlFields.h"
 #include <GLES2/gl2.h>
@@ -318,7 +316,6 @@ void GlFields::create(v8::Isolate *isolate,v8::Local<v8::Context> &context_local
                     {"MAX_RENDERBUFFER_SIZE",                        GL_MAX_RENDERBUFFER_SIZE},
                     {"INVALID_FRAMEBUFFER_OPERATION",                GL_INVALID_FRAMEBUFFER_OPERATION},
                     {"STENCIL_INDEX",                                0x1901},
-
             };
     for(const Field& f : fields) {
         gl->Set(

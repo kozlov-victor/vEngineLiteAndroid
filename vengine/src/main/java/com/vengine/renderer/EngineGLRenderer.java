@@ -18,29 +18,13 @@ public class EngineGLRenderer implements GLSurfaceView.Renderer {
     private boolean surfaceAlreadyCreated = false;
     private volatile boolean resizeRequested = false;
 
-    private void compileScriptFromLocalUrl(String assetUrl) {
-        JsCompilationResult result = VEngine.compileScriptFromLocalUrl(assetUrl);
-        if (!result.isSuccess()) {
-            VEngine.dispose();
-            throw new RuntimeException("js error: \n"+result.getError());
-        }
-    }
-
-    private void compileInlineScript(String script) {
-        JsCompilationResult result = VEngine.compileScript("<inline>",script);
-        if (!result.isSuccess()) {
-            VEngine.dispose();
-            throw new RuntimeException("js error: "+result.getError());
-        }
-    }
-
     private void applyScreenSize() {
         var context = VEngine.getContext();
         if (context==null) return;
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         int widthPixels = metrics.widthPixels;
         int heightPixels = metrics.heightPixels;
-        compileInlineScript("innerWidth = "+widthPixels+";innerHeight = "+heightPixels+";");
+        VEngine.compileInlineScript("innerWidth = "+widthPixels+";innerHeight = "+heightPixels+";");
     }
 
     public void requestResize() {
@@ -59,7 +43,7 @@ public class EngineGLRenderer implements GLSurfaceView.Renderer {
         }
         VEngine.initV8();
         applyScreenSize();
-        compileScriptFromLocalUrl("bootstrap.js");
+        VEngine.compileScriptFromLocalUrl("bootstrap.js");
         var result = VEngine.initGlobalHandlers();
         if (!result.isSuccess()) {
             VEngine.dispose();

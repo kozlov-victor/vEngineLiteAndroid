@@ -1,6 +1,4 @@
-//
-// Created by kozlo on 11/19/2023.
-//
+
 
 #include "JsCompilationResult.h"
 #include <string>

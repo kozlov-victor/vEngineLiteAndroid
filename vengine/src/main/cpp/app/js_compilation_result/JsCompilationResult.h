@@ -1,9 +1,5 @@
-//
-// Created by kozlo on 11/19/2023.
-//
-
-#ifndef VENGINEANDROID_JSCOMPILATIONRESULT_H
-#define VENGINEANDROID_JSCOMPILATIONRESULT_H
+#ifndef VENGINE_JSCOMPILATIONRESULT_H
+#define VENGINE_JSCOMPILATIONRESULT_H
 #include <string>
 
 class JsCompilationResult {
@@ -17,4 +13,4 @@ public:
 };
 
 
-#endif //VENGINEANDROID_JSCOMPILATIONRESULT_H
+#endif

@@ -1,14 +1,10 @@
-//
-// Created by kozlo on 11/18/2023.
-//
-
-#ifndef VENGINEANDROID_JS_H
-#define VENGINEANDROID_JS_H
+#ifndef VENGINE_JS_H
+#define VENGINE_JS_H
 
 #include <string>
 #include <libplatform/libplatform.h>
 #include <v8.h>
-#include "app/js_compilation_result/JsCompilationResult.h"
+#include "../js_compilation_result/JsCompilationResult.h"
 
 class Js {
 
@@ -24,7 +20,7 @@ public:
       Js();
       ~Js();
       void initV8();
-      void initGlobalObjects(JNIEnv *env) const;
+      void initGlobalObjects(void* env) const;
       JsCompilationResult compileScript(const char* fileName, const char* code) const;
       bool callFunction(const v8::Global<v8::Function>& function,int argc = 0,v8::Local<v8::Value> argv[] = nullptr) const;
       void onResize(int width, int height) const;
@@ -32,4 +28,4 @@ public:
 };
 
 
-#endif //VENGINEANDROID_JS_H
+#endif
