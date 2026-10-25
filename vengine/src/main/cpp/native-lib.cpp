@@ -4,7 +4,7 @@
 #include "app/js/Js.h"
 #include "app/logger/Logger.h"
 #include "app/misc/android/misc.h"
-
+#include "app/bootstrap/bootstrap.hpp"
 
 Js *js;
 
@@ -47,6 +47,19 @@ Java_com_vengine_engine_VEngine_initGlobalHandlers(JNIEnv *env, jclass clazz) {
     jclass cl = env->FindClass("com/vengine/model/JsCompilationResult");
     jmethodID cid = env->GetMethodID(cl, "<init>", "(ZLjava/lang/String;)V");
     return env->NewObject(cl, cid, success,env->NewStringUTF(result.c_str()));
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_com_vengine_engine_VEngine_initBootstrap(JNIEnv *env, jclass clazz) {
+    JsCompilationResult result =
+            js->compileScript(
+                "bootstrap.js",
+                bootstrapJs
+            );
+    jclass cl = env->FindClass("com/vengine/model/JsCompilationResult");
+    jmethodID cid = env->GetMethodID(cl, "<init>", "(ZLjava/lang/String;)V");
+    return env->NewObject(cl, cid, result.success,env->NewStringUTF(result.error.c_str()));
 }
 
 extern "C"

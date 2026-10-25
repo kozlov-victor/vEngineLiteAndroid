@@ -65,16 +65,11 @@ public class VEngine {
         return null;
     }
 
-    private static void checkCompilationResult(JsCompilationResult result) {
+    public static void checkCompilationResult(JsCompilationResult result) {
         if (!result.isSuccess()) {
             VEngine.dispose();
             throw new RuntimeException("js error: \n"+result.getError());
         }
-    }
-
-    public static void compileScriptFromLocalUrl(String assetFileName) {
-        JsCompilationResult result = compileScript(assetFileName, VEngine.assets.loadStringFromLocalAsset(assetFileName));
-        checkCompilationResult(result);
     }
 
     public static void compileScriptFromUrl(String url) {
@@ -89,6 +84,7 @@ public class VEngine {
 
     public static native void initV8();
     public static native JsCompilationResult initGlobalHandlers();
+    public static native JsCompilationResult initBootstrap();
     public static native String getV8Version();
     private static native JsCompilationResult compileScript(String fileName, String source);
     public static native void updateFrame();

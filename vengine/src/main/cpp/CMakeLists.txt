@@ -35,6 +35,7 @@ add_library(
         app/js_compilation_result/JsCompilationResult.cpp
         app/misc/android/misc.cpp
         app/misc/fun.hpp
+        app/bootstrap/bootstrap.hpp
 )
 
 target_compile_definitions(

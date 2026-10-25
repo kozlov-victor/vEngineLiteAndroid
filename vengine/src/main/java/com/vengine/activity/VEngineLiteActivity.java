@@ -32,7 +32,7 @@ public class VEngineLiteActivity extends AppCompatActivity implements View.OnTou
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.v_engine_activity);
         VEngine.surfaceView = findViewById(R.id.engine_gl_surface_view);
         DisplayMetrics metrics = Objects.requireNonNull(VEngine.getContext()).getResources().getDisplayMetrics();
         int widthPixels = metrics.widthPixels;

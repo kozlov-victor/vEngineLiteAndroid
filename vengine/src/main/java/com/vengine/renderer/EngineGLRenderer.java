@@ -3,11 +3,10 @@ package com.vengine.renderer;
 import android.opengl.GLSurfaceView;
 import android.util.DisplayMetrics;
 
+import com.vengine.engine.VEngine;
 import com.vengine.engine.VEngineSetup;
 import com.vengine.utils.FPSCounter;
-import com.vengine.model.JsCompilationResult;
 import com.vengine.utils.Logger;
-import com.vengine.engine.VEngine;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -43,12 +42,8 @@ public class EngineGLRenderer implements GLSurfaceView.Renderer {
         }
         VEngine.initV8();
         applyScreenSize();
-        VEngine.compileScriptFromLocalUrl("bootstrap.js");
-        var result = VEngine.initGlobalHandlers();
-        if (!result.isSuccess()) {
-            VEngine.dispose();
-            throw new RuntimeException("initGlobalHandlers error: \n"+result.getError());
-        }
+        VEngine.checkCompilationResult(VEngine.initBootstrap());
+        VEngine.checkCompilationResult(VEngine.initGlobalHandlers());
 
         var activity = VEngine.getActivity();
         if (activity!=null) {
