@@ -82,9 +82,7 @@ public class VEngine {
         checkCompilationResult(result);
     }
 
-    public static native void initV8();
-    public static native JsCompilationResult initGlobalHandlers();
-    public static native JsCompilationResult initBootstrap();
+    public static native void initV8(int screenWidth, int screenHeight);
     public static native String getV8Version();
     private static native JsCompilationResult compileScript(String fileName, String source);
     public static native void updateFrame();

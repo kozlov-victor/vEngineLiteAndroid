@@ -17,13 +17,18 @@ public class EngineGLRenderer implements GLSurfaceView.Renderer {
     private boolean surfaceAlreadyCreated = false;
     private volatile boolean resizeRequested = false;
 
-    private void applyScreenSize() {
+    private ScreenSize getScreenSize() {
         var context = VEngine.getContext();
-        if (context==null) return;
+        if (context==null) {
+            throw new RuntimeException("getScreenSize error");
+        }
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         int widthPixels = metrics.widthPixels;
         int heightPixels = metrics.heightPixels;
-        VEngine.compileInlineScript("innerWidth = "+widthPixels+";innerHeight = "+heightPixels+";");
+        ScreenSize size = new ScreenSize();
+        size.width = widthPixels;
+        size.height = heightPixels;
+        return size;
     }
 
     public void requestResize() {
@@ -40,16 +45,14 @@ public class EngineGLRenderer implements GLSurfaceView.Renderer {
             VEngine.dispose();
             System.exit(0);
         }
-        VEngine.initV8();
-        applyScreenSize();
-        VEngine.checkCompilationResult(VEngine.initBootstrap());
-        VEngine.checkCompilationResult(VEngine.initGlobalHandlers());
-
+        ScreenSize size = getScreenSize();
+        VEngine.initV8(size.width,size.height);
         var activity = VEngine.getActivity();
-        if (activity!=null) {
-            var assetsLoaderListener = VEngineSetup.getOnAssetsLoaderListener();
-            assetsLoaderListener.run();
+        if (activity==null) {
+            throw new RuntimeException("VEngine.getActivity() returned null");
         }
+        var assetsLoaderListener = VEngineSetup.getOnAssetsLoaderListener();
+        assetsLoaderListener.run();
         surfaceAlreadyCreated = true;
     }
 
@@ -62,13 +65,17 @@ public class EngineGLRenderer implements GLSurfaceView.Renderer {
         if (resizeRequested) {
             var context = VEngine.getContext();
             if (context==null) return;
-            DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-            int widthPixels = metrics.widthPixels;
-            int heightPixels = metrics.heightPixels;
-            VEngine.onResize(widthPixels, heightPixels);
+            ScreenSize size = getScreenSize();
+            VEngine.onResize(size.width, size.height);
             resizeRequested = false;
         }
         VEngine.touchSurfaceDelegate.updateFrame();
         fpsCounter.updateFrame();
     }
+
+    private static class ScreenSize {
+        private int width;
+        private int height;
+    }
+
 }

@@ -36,6 +36,7 @@ add_library(
         app/misc/android/misc.cpp
         app/misc/fun.hpp
         app/bootstrap/bootstrap.hpp
+        app/v_engine/v_engine.cpp
 )
 
 target_compile_definitions(
