@@ -31,7 +31,8 @@ add_library(
         app/console/Console.cpp
         app/gl/GlFields.cpp
         app/gl/GlFunctions.cpp
-        app/external_functions/ExternalFunctions.android.cpp
+        app/external_functions/ExternalFunctions.cpp
+        app/external_functions/external_functions_impl/ExternalFunctionsImpl.android.cpp
         app/js_compilation_result/JsCompilationResult.cpp
         app/misc/android/misc.cpp
         app/misc/fun.hpp

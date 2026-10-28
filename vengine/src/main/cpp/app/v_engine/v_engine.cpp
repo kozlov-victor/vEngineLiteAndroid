@@ -39,7 +39,7 @@ std::string VEngine::getV8Version() {
     return V8_VERSION_STRING;
 }
 
-JsCompilationResult VEngine::compileScript(std::string fileName, std::string source) {
+JsCompilationResult VEngine::compileScript(const std::string &fileName, const std::string& source) const {
     return
         js->compileScript(fileName.c_str(),
             source.c_str()
@@ -53,14 +53,21 @@ void VEngine::updateFrame() const {
     js->callFunction(js->nextTickFunction);
 }
 
-void VEngine::onTouchEvent(std::string eventName, float x, float y, int id) const {
+void VEngine::onTouchEvent(const std::string_view eventName, float x, float y, int id) const {
     if (js == nullptr) {
         return;
     }
-    js->onTouchEvent(eventName.c_str(),x,y,id);
+    js->onTouchEvent(eventName.data(),x,y,id);
 }
 
-void VEngine::onResize(int width, int height) const {
+void VEngine::onKeyUpDown(const std::string_view keyCode, const bool down) const {
+    if (js == nullptr) {
+        return;
+    }
+    js->onKeyUpDown(keyCode.data(),down);
+}
+
+void VEngine::onResize(const int width, const int height) const {
     if (js == nullptr) {
         return;
     }
